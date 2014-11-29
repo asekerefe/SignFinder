@@ -156,8 +156,11 @@ namespace HeaderSearcher
                     }
                 }
 
-                if ((bool)abortSearch)
+                if (abortSearch)
+                {
                     exit = true;
+                    break;
+                }
             }
 
             if (!exit)
