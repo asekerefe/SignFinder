@@ -6,16 +6,16 @@ using System.Threading.Tasks;
 using System.Threading;
 using System.IO;
 
-namespace HeaderSearcher
+namespace SignFinder
 {
     /*  
-     * HeaderSearcher
+     * SignFinder
      *
      * Core class for searching files
      * 
      * written by Alican Şekerefe
      */
-    class HeaderSearcher
+    class SignFinder
     {
         //callback for passing the search results as file names
         public delegate void OnSearchFinished(List<string> files);
@@ -45,7 +45,7 @@ namespace HeaderSearcher
         /// <param name="directorySearchStartedCallback"></param>
         /// <param name="fileSearchStartedcallback"></param>
         /// <param name="fileMatchedCallback"></param>
-        public HeaderSearcher(OnSearchFinished finishedCallback, OnDirectorySearchStarted directorySearchStartedCallback, OnFileSearchStarted fileSearchStartedcallback, OnFileMatched fileMatchedCallback)
+        public SignFinder(OnSearchFinished finishedCallback, OnDirectorySearchStarted directorySearchStartedCallback, OnFileSearchStarted fileSearchStartedcallback, OnFileMatched fileMatchedCallback)
         {
             this.finishedCallback = finishedCallback;
             this.directorySearchStartedCallback = directorySearchStartedCallback;
@@ -54,23 +54,23 @@ namespace HeaderSearcher
         }
 
         /// <summary>
-        /// starts searching the files inside the path for the given header names.
+        /// starts searching the files inside the path for the given signature names.
         /// </summary>
         /// <param name="path">path to search</param>
-        /// <param name="headersToSearch">header names the search inside a file</param>
+        /// <param name="signaturesToSearch">signature names the search inside a file</param>
         /// <param name="searchSubDirectories">will this search include the subdirectories?</param>
-        /// <param name="maxBytesToCheck">how many bytes are going to be read in a file to match header name? needs to be kept small</param>
+        /// <param name="maxBytesToCheck">how many bytes are going to be read in a file to match signature name? needs to be kept small</param>
         /// <returns>true if search started</returns>
-        public bool start(string path, List<string> headersToSearch, bool searchSubDirectories = false, int maxBytesToCheck = 20)
+        public bool start(string path, List<string> signaturesToSearch, bool searchSubDirectories = false, int maxBytesToCheck = 20)
         {
             bool canStart = !searching;
 
             if (canStart)
             {
-                uppercaseStrings(headersToSearch);
+                uppercaseStrings(signaturesToSearch);
                 abortSearch = false;
                 searching = true;
-                currentSearchData = new SearchData(path, headersToSearch, searchSubDirectories, maxBytesToCheck);
+                currentSearchData = new SearchData(path, signaturesToSearch, searchSubDirectories, maxBytesToCheck);
                 //start searching files in a new thread
                 ThreadStart ts = new ThreadStart(search);
                 searchThread = new Thread(ts);
@@ -122,7 +122,7 @@ namespace HeaderSearcher
                 directorySearchStartedCallback(path);
 
             string[] fileArr = Directory.GetFiles(path);
-            List<string> headers = currentSearchData.getSearchHeaders();
+            List<string> signatures = currentSearchData.getSignatures();
 
             //iterate over each file found inside the path
             for (int i = 0; i < fileArr.Length; i++)
@@ -142,10 +142,10 @@ namespace HeaderSearcher
 
                 string target = new string(buffer);
 
-                //search header names inside the target string
-                for (int j = 0; j < headers.Count; j++)
+                //search signature names inside the target string
+                for (int j = 0; j < signatures.Count; j++)
                 {
-                    if (target.Contains(headers[j]))
+                    if (target.Contains(signatures[j]))
                     {
                         //target matched. make notification
                         if (fileMatchedCallback != null)

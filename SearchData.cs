@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HeaderSearcher
+namespace SignFinder
 {
     /*
      * SearchData
@@ -18,12 +18,12 @@ namespace HeaderSearcher
         private string path;
         private bool includeSubDirectories;
         private int maxBytesToCheck;
-        private List<string> headersToSearch = null;
+        private List<string> signaturesToSearch = null;
 
-        public SearchData(string path, List<string> headersToSearch, bool includeSubDirectories, int maxBytesToCheck)
+        public SearchData(string path, List<string> signaturesToSearch, bool includeSubDirectories, int maxBytesToCheck)
         {
             this.path = path;
-            this.headersToSearch = headersToSearch;
+            this.signaturesToSearch = signaturesToSearch;
             this.includeSubDirectories = includeSubDirectories;
             this.maxBytesToCheck = maxBytesToCheck;
         }
@@ -38,9 +38,9 @@ namespace HeaderSearcher
             return this.includeSubDirectories;
         }
 
-        public List<string> getSearchHeaders()
+        public List<string> getSignatures()
         {
-            return this.headersToSearch;
+            return this.signaturesToSearch;
         }
 
         public int getMaxBytesToCheck()
